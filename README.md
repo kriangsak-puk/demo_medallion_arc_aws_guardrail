@@ -1,4 +1,4 @@
-# 🏰 Safe Haven Demo Booth
+# 🏰 Secure your AI pipeline: Medallion Architecture with AWS Guardrails
 
 An interactive Chainlit web application for the **AWS Summit Bangkok** expo floor that demonstrates the security contrast between an ungoverned AI pipeline ("Data Swamp") and a fully secured Zero-Trust pipeline ("Safe Haven").
 
