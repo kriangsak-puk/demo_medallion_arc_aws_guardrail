@@ -53,13 +53,14 @@ class MockEngine:
         return (
             "⚠️ Data Swamp Response (Ungoverned):\n\n"
             "Here is the requested data from the Gold Table:\n\n"
-            "| Region | Product | Revenue | Email | Phone | National ID |\n"
-            "|--------|---------|---------|-------|-------|-------------|\n"
-            "| APAC | Widget Pro | ฿1,200,000 | somchai@company.co.th | +66-81-234-5678 | 1-1234-56789-01-2 |\n"
-            "| APAC | DataSync | ฿850,000 | ananya@corp.co.th | +66-92-876-5432 | 3-9876-54321-09-8 |\n"
-            "| EU | CloudBase | €420,000 | hans@firma.de | +49-170-1234567 | DE-987654321 |\n\n"
-            "Company Code: ACME-INTERNAL-2024-CONFIDENTIAL\n"
-            "Access Level: FULL (Permissive_Role — all columns visible)"
+            "| customer_id | first_name | last_name | email | phone_number | national_id | category | product_name | total_amount |\n"
+            "|-------------|-----------|-----------|-------|--------------|-------------|----------|--------------|-------------|\n"
+            "| CUST-10042 | Somchai | Garcia | somchai.garcia55@gmail.com | +1-481-234-5678 | 312-45-6789 | Electronics | Laptop Pro 15 | 1,249.99 |\n"
+            "| CUST-10087 | Ananya | Johnson | ananya.johnson12@yahoo.com | +1-692-876-5432 | 567-89-0123 | Apparel | Running Shoes | 189.50 |\n"
+            "| CUST-10153 | Hans | Williams | hans.williams77@outlook.com | +1-370-123-4567 | 890-12-3456 | Home & Kitchen | Air Fryer 5L | 299.00 |\n\n"
+            "Credit Card: 4532-1234-5678-9012\n"
+            "Shipping Address: 4521 Oak St, Austin, TX 78701\n"
+            "Access Level: FULL (Permissive_Role — all columns visible including PII)"
         )
 
     async def mock_engine_b(self, prompt: str) -> str:
@@ -108,11 +109,11 @@ class MockEngine:
         return (
             "✅ Safe Haven Response (Governed):\n\n"
             "Here is the requested data from the Gold Table:\n\n"
-            "| Region | Product | Revenue | Date |\n"
-            "|--------|---------|---------|------|\n"
-            "| APAC | Widget Pro | ฿1,200,000 | 2024-Q3 |\n"
-            "| APAC | DataSync | ฿850,000 | 2024-Q3 |\n"
-            "| EU | CloudBase | €420,000 | 2024-Q3 |\n\n"
+            "| customer_id | category | product_name | total_amount | order_date | order_status |\n"
+            "|-------------|----------|--------------|-------------|------------|-------------|\n"
+            "| CUST-10042 | Electronics | Laptop Pro 15 | 1,249.99 | 2026-01-15 | Completed |\n"
+            "| CUST-10087 | Apparel | Running Shoes | 189.50 | 2026-02-03 | Shipped |\n"
+            "| CUST-10153 | Home & Kitchen | Air Fryer 5L | 299.00 | 2026-03-22 | Completed |\n\n"
             "Access Level: RESTRICTED (Restricted_Role — PII columns excluded)\n"
             "Guardrail Status: ✅ PASS"
         )
@@ -131,11 +132,14 @@ class MockEngine:
         await asyncio.sleep(delay)
 
         return {
-            "findings_count": 3,
+            "findings_count": 7,
             "categories": {
                 "EMAIL_ADDRESS": 1,
                 "PHONE_NUMBER": 1,
                 "NATIONAL_ID": 1,
+                "CREDIT_CARD_NUMBER": 1,
+                "DATE_OF_BIRTH": 1,
+                "ADDRESS": 2,
             },
         }
 
@@ -154,8 +158,16 @@ class MockEngine:
         await asyncio.sleep(delay)
 
         return {
-            "allowed": ["region", "product", "revenue", "date"],
-            "denied": ["email", "phone_number", "national_id"],
+            "allowed": [
+                "customer_id", "order_id", "order_date", "product_name",
+                "category", "quantity", "price_per_unit", "total_amount",
+                "payment_method", "order_status", "product_sku",
+            ],
+            "denied": [
+                "first_name", "last_name", "email", "phone_number",
+                "national_id", "date_of_birth", "credit_card_number",
+                "shipping_address", "billing_address", "device_ip_address",
+            ],
         }
 
     async def mock_gate3(self, prompt: str) -> Dict[str, Any]:

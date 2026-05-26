@@ -117,8 +117,8 @@ class TestGate1MacieExecute:
         )
         result = await gate.execute(context)
 
-        # MockEngine.mock_gate1() returns findings_count=3
-        assert result.details["findings_count"] == 3
+        # MockEngine.mock_gate1() returns findings_count=7
+        assert result.details["findings_count"] == 7
         assert result.details["categories"] is not None
         assert result.details["expanded"] is True
 
@@ -133,7 +133,7 @@ class TestGate1MacieExecute:
         result = await gate.execute(context)
 
         step_output = result.details["step_output"]
-        assert "Amazon Macie: 3 PII findings detected in source data" in step_output
+        assert "Amazon Macie: 7 PII findings detected in source data" in step_output
         assert "EMAIL_ADDRESS" in step_output
         assert "PHONE_NUMBER" in step_output
         assert "NATIONAL_ID" in step_output

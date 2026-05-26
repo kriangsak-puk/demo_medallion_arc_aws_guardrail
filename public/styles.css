@@ -47,3 +47,48 @@ button[id^="action-preset"]:disabled {
     cursor: not-allowed !important;
     pointer-events: none !important;
 }
+
+/* =============================================================================
+ * "Made by Kiro" badge — fixed bottom-right corner
+ * ============================================================================= */
+
+.kiro-badge {
+    position: fixed;
+    bottom: 16px;
+    right: 16px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    border: 1px solid rgba(99, 102, 241, 0.4);
+    border-radius: 20px;
+    font-family: 'Inter', -apple-system, sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    color: #a5b4fc;
+    letter-spacing: 0.3px;
+    z-index: 9999;
+    box-shadow: 0 2px 12px rgba(99, 102, 241, 0.2);
+    transition: all 0.2s ease;
+    text-decoration: none;
+}
+
+.kiro-badge:hover {
+    border-color: rgba(99, 102, 241, 0.8);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.35);
+    color: #c7d2fe;
+    transform: translateY(-1px);
+}
+
+.kiro-badge .kiro-icon {
+    font-size: 16px;
+    filter: drop-shadow(0 0 4px rgba(139, 92, 246, 0.5));
+}
+
+.kiro-badge .kiro-text {
+    background: linear-gradient(90deg, #a5b4fc, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}

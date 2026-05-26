@@ -32,23 +32,27 @@ PIE_KEYWORDS: List[str] = [
 ]
 
 # Mock data for Mock_Mode chart generation
+# Mock data for Mock_Mode chart generation
 MOCK_REVENUE_BY_REGION: Dict[str, int] = {
-    "APAC": 1200000,
-    "EU": 420000,
-    "NA": 890000,
+    "Electronics": 2450000,
+    "Apparel": 890000,
+    "Home & Kitchen": 620000,
+    "Groceries": 340000,
 }
 
 MOCK_MONTHLY_TRENDS: Dict[str, int] = {
-    "Jan": 100,
-    "Feb": 120,
-    "Mar": 150,
-    "Apr": 180,
+    "Jan": 210,
+    "Feb": 245,
+    "Mar": 310,
+    "Apr": 380,
 }
 
 MOCK_PRODUCT_DISTRIBUTION: Dict[str, int] = {
-    "Widget Pro": 45,
-    "DataSync": 30,
-    "CloudBase": 25,
+    "Laptop Pro 15": 35,
+    "Smartphone X": 25,
+    "Running Shoes": 20,
+    "Air Fryer 5L": 12,
+    "Coffee Maker Mini": 8,
 }
 
 
@@ -367,26 +371,26 @@ class ChartRenderer:
         if any(kw in query_lower for kw in LINE_KEYWORDS):
             # Monthly trends data
             data = [
-                {"month": k, "value": v} for k, v in MOCK_MONTHLY_TRENDS.items()
+                {"order_month": k, "order_count": v} for k, v in MOCK_MONTHLY_TRENDS.items()
             ]
             chart_type = "line"
-            summary_text = "Monthly trend shows consistent growth from 100 to 180 units (80% increase over 4 months)."
+            summary_text = "Monthly orders show consistent growth from 210 to 380 orders (81% increase over 4 months)."
         elif any(kw in query_lower for kw in PIE_KEYWORDS):
             # Product distribution data
             data = [
-                {"product": k, "share": v}
+                {"product_name": k, "order_count": v}
                 for k, v in MOCK_PRODUCT_DISTRIBUTION.items()
             ]
             chart_type = "pie"
-            summary_text = "Widget Pro leads with 45% market share, followed by DataSync (30%) and CloudBase (25%)."
+            summary_text = "Laptop Pro 15 leads with 35% of orders, followed by Smartphone X (25%) and Running Shoes (20%)."
         else:
-            # Default: Revenue by region
+            # Default: Sales by category
             data = [
-                {"region": k, "revenue": v}
+                {"category": k, "total_amount": v}
                 for k, v in MOCK_REVENUE_BY_REGION.items()
             ]
             chart_type = "bar"
-            summary_text = "APAC region leads with ฿1.2M in revenue, followed by NA (฿890K) and EU (฿420K)."
+            summary_text = "Electronics leads with $2.45M in total sales, followed by Apparel ($890K) and Home & Kitchen ($620K)."
 
         return await self.render_chart(query, data, chart_type=chart_type)
 

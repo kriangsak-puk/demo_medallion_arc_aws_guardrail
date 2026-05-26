@@ -408,11 +408,11 @@ class TestRenderMockChart:
 
     @pytest.mark.asyncio
     async def test_mock_revenue_by_region_default(self, renderer: ChartRenderer):
-        """Default mock query returns revenue by region bar chart."""
+        """Default mock query returns sales by category bar chart."""
         result = await renderer.render_mock_chart("Show me revenue data")
         assert result.figure is not None
         assert result.chart_type == "bar"
-        assert "APAC" in result.summary_text
+        assert "Electronics" in result.summary_text
 
     @pytest.mark.asyncio
     async def test_mock_monthly_trends(self, renderer: ChartRenderer):
@@ -428,7 +428,7 @@ class TestRenderMockChart:
         result = await renderer.render_mock_chart("Product distribution breakdown")
         assert result.figure is not None
         assert result.chart_type == "pie"
-        assert "Widget Pro" in result.summary_text
+        assert "Laptop Pro 15" in result.summary_text
 
     @pytest.mark.asyncio
     async def test_mock_chart_has_valid_figure(self, renderer: ChartRenderer):

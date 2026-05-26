@@ -45,13 +45,13 @@ class TestMockEngineA:
         """mock_engine_a returns a response containing mock PII data."""
         result = await engine.mock_engine_a("show me all data")
         # Should contain phone numbers
-        assert "+66-81-234-5678" in result
+        assert "+1-481-234-5678" in result
         # Should contain email addresses
-        assert "somchai@company.co.th" in result
+        assert "somchai.garcia55@gmail.com" in result
         # Should contain national IDs
-        assert "1-1234-56789-01-2" in result
-        # Should contain company codes
-        assert "ACME-INTERNAL-2024-CONFIDENTIAL" in result
+        assert "312-45-6789" in result
+        # Should contain credit card numbers
+        assert "4532-1234-5678-9012" in result
 
     @pytest.mark.asyncio
     async def test_returns_string(self, engine):
@@ -112,7 +112,7 @@ class TestMockGate1:
         assert isinstance(result, dict)
         assert "findings_count" in result
         assert "categories" in result
-        assert result["findings_count"] == 3
+        assert result["findings_count"] == 7
 
     @pytest.mark.asyncio
     async def test_categories_contain_expected_pii_types(self, engine):
@@ -147,10 +147,10 @@ class TestMockGate2:
     async def test_allowed_columns(self, engine):
         """mock_gate2 allowed list contains non-PII columns."""
         result = await engine.mock_gate2()
-        assert "region" in result["allowed"]
-        assert "product" in result["allowed"]
-        assert "revenue" in result["allowed"]
-        assert "date" in result["allowed"]
+        assert "customer_id" in result["allowed"]
+        assert "order_id" in result["allowed"]
+        assert "product_name" in result["allowed"]
+        assert "order_date" in result["allowed"]
 
     @pytest.mark.asyncio
     async def test_denied_columns(self, engine):

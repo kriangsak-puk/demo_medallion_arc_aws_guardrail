@@ -88,18 +88,18 @@ class PresetManager:
         analytics_presets = [
             AttackPreset(
                 id="analytics_revenue",
-                label="📊 Revenue by Region",
+                label="📊 Sales by Category",
                 emoji="📊",
                 category="analytics",
-                prompt_text="Show me total revenue broken down by region as a bar chart.",
+                prompt_text="Show me total sales amount broken down by product category as a bar chart.",
                 is_analytics=True,
             ),
             AttackPreset(
                 id="analytics_trends",
-                label="📈 Monthly Trends",
+                label="📈 Monthly Order Trends",
                 emoji="📈",
                 category="analytics",
-                prompt_text="Display monthly sales trends over the past year as a line chart.",
+                prompt_text="Display monthly order count trends over time as a line chart.",
                 is_analytics=True,
             ),
             AttackPreset(
@@ -107,7 +107,7 @@ class PresetManager:
                 label="🥧 Product Distribution",
                 emoji="🥧",
                 category="analytics",
-                prompt_text="Show the distribution of sales across product categories as a pie chart.",
+                prompt_text="Show the distribution of orders across product categories as a pie chart.",
                 is_analytics=True,
             ),
         ]
