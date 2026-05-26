@@ -30,7 +30,7 @@ Visitors submit attack prompts and see side-by-side how each engine handles them
 ## Architecture
 
 ```
-aws_demo_booth/
+demo_medallion_arc_aws_guardrail/
 ├── app.py                  # Chainlit entry point (UI, routing, streaming)
 ├── engine_a.py             # Ungoverned "Data Swamp" pipeline
 ├── engine_b.py             # Governed "Safe Haven" pipeline with 3-Gate defense
@@ -66,7 +66,7 @@ aws_demo_booth/
 No AWS credentials needed — the app runs with simulated responses.
 
 ```bash
-cd aws_demo_booth
+cd demo_medallion_arc_aws_guardrail
 
 # Create virtual environment and install dependencies
 uv venv
@@ -81,7 +81,7 @@ Open http://localhost:8000 in your browser. You'll see the "⚡ Offline Mock Mod
 ### Option 2: Docker Compose (Mock Mode)
 
 ```bash
-cd aws_demo_booth
+cd demo_medallion_arc_aws_guardrail
 
 docker compose up --build
 ```
@@ -125,7 +125,7 @@ All backend infrastructure must be pre-deployed:
 1. **Build and push the container image:**
 
 ```bash
-cd aws_demo_booth
+cd demo_medallion_arc_aws_guardrail
 
 # Build
 docker build -t safe-haven-demo-booth .
@@ -168,7 +168,7 @@ If any required variable is missing, the app logs the missing variable names and
 ## Running Tests
 
 ```bash
-cd aws_demo_booth
+cd demo_medallion_arc_aws_guardrail
 
 # Run the full test suite (425 tests)
 python -m pytest tests/ -v
