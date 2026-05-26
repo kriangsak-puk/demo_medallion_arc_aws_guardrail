@@ -2,7 +2,7 @@
 
 import pytest
 
-from aws_demo_booth.validators import (
+from validators import (
     MAX_ENGINE_LENGTH,
     MAX_PROMPT_LENGTH,
     ValidationResult,

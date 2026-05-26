@@ -15,7 +15,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.agent_wrapper import (
+from agent_wrapper import (
     KB_RETRIEVAL_TIMEOUT_SECONDS,
     MODEL_INFERENCE_TIMEOUT_SECONDS,
     AgentConfig,
@@ -199,7 +199,7 @@ def _make_config() -> AgentConfig:
 class TestStrandsAgentWrapperInit:
     """Tests for StrandsAgentWrapper initialization."""
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     def test_creates_sts_client_on_init(self, mock_boto_client):
         """Wrapper creates an STS client during initialization."""
         config = _make_config()
@@ -215,7 +215,7 @@ class TestStrandsAgentWrapperInit:
 class TestAssumeRole:
     """Tests for the _assume_role method."""
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     def test_successful_role_assumption(self, mock_boto_client):
         """_assume_role returns credentials on success."""
         mock_sts = MagicMock()
@@ -240,7 +240,7 @@ class TestAssumeRole:
         assert credentials["aws_secret_access_key"] == "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
         assert credentials["aws_session_token"] == "FwoGZXIvYXdzEBYaDH..."
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     def test_role_assumption_access_denied(self, mock_boto_client, caplog):
         """_assume_role raises RoleAssumptionError on AccessDenied."""
         from botocore.exceptions import ClientError
@@ -264,7 +264,7 @@ class TestAssumeRole:
         assert exc_info.value.role_arn == "arn:aws:iam::123456789012:role/BadRole"
         assert exc_info.value.error_type == "AccessDenied"
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     def test_role_assumption_logs_error(self, mock_boto_client, caplog):
         """_assume_role logs the role ARN and error type on failure."""
         from botocore.exceptions import ClientError
@@ -289,7 +289,7 @@ class TestAssumeRole:
         assert "arn:aws:iam::123456789012:role/BadRole" in caplog.text
         assert "MalformedPolicyDocument" in caplog.text
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     def test_role_assumption_unexpected_error(self, mock_boto_client):
         """_assume_role handles unexpected exceptions gracefully."""
         mock_sts = MagicMock()
@@ -311,7 +311,7 @@ class TestAssumeRole:
 class TestRetrieveContext:
     """Tests for the retrieve_context method."""
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_successful_retrieval(self, mock_boto_client):
         """retrieve_context returns concatenated passages from KB."""
@@ -347,7 +347,7 @@ class TestRetrieveContext:
         assert "First passage about sales data." in result
         assert "Second passage about revenue." in result
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_retrieval_empty_results(self, mock_boto_client):
         """retrieve_context returns empty string when no results found."""
@@ -377,7 +377,7 @@ class TestRetrieveContext:
 
         assert result == ""
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_retrieval_client_error_raises_kb_error(self, mock_boto_client, caplog):
         """retrieve_context raises KnowledgeBaseError on ClientError."""
@@ -416,7 +416,7 @@ class TestRetrieveContext:
         assert exc_info.value.error_type == "ResourceNotFoundException"
         assert "kb-test-123" in caplog.text
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_retrieval_role_assumption_failure(self, mock_boto_client):
         """retrieve_context raises RoleAssumptionError when STS fails."""
@@ -446,7 +446,7 @@ class TestRetrieveContext:
 class TestInvoke:
     """Tests for the invoke method."""
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_invoke_role_assumption_failure(self, mock_boto_client):
         """invoke raises RoleAssumptionError when STS fails."""
@@ -471,7 +471,7 @@ class TestInvoke:
                 apply_guardrails=False,
             )
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_invoke_with_guardrails(self, mock_boto_client):
         """invoke passes guardrail config when apply_guardrails=True."""
@@ -493,7 +493,7 @@ class TestInvoke:
         mock_agent_instance = MagicMock()
         mock_agent_instance.return_value = "Test response"
 
-        import aws_demo_booth.agent_wrapper as aw_module
+        import agent_wrapper as aw_module
 
         mock_model_cls = MagicMock()
         with patch.object(aw_module, "Agent", mock_agent_instance, create=True), \
@@ -511,7 +511,7 @@ class TestInvoke:
         assert call_kwargs["guardrail_config"]["guardrailIdentifier"] == "gr-test-456"
         assert call_kwargs["guardrail_config"]["guardrailVersion"] == "1"
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_invoke_without_guardrails(self, mock_boto_client):
         """invoke does NOT pass guardrail config when apply_guardrails=False."""
@@ -532,7 +532,7 @@ class TestInvoke:
         mock_agent_instance = MagicMock()
         mock_agent_instance.return_value = "Unrestricted response"
 
-        import aws_demo_booth.agent_wrapper as aw_module
+        import agent_wrapper as aw_module
 
         mock_model_cls = MagicMock()
         with patch.object(aw_module, "Agent", mock_agent_instance, create=True), \
@@ -548,7 +548,7 @@ class TestInvoke:
         call_kwargs = mock_model_cls.call_args[1]
         assert "guardrail_config" not in call_kwargs
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_invoke_streams_tokens_via_callback(self, mock_boto_client):
         """invoke calls on_token callback for each token in the response."""
@@ -578,7 +578,7 @@ class TestInvoke:
         async def on_token(token: str):
             tokens_received.append(token)
 
-        import aws_demo_booth.agent_wrapper as aw_module
+        import agent_wrapper as aw_module
 
         with patch.object(aw_module, "Agent", mock_agent_cls, create=True), \
              patch.object(aw_module, "BedrockModel", MagicMock(), create=True), \
@@ -594,7 +594,7 @@ class TestInvoke:
         assert result.content == "Hello world response"
         assert result.error is None
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_invoke_returns_error_on_agent_failure(self, mock_boto_client):
         """invoke returns AgentResponse with error when agent invocation fails."""
@@ -612,7 +612,7 @@ class TestInvoke:
         wrapper = StrandsAgentWrapper(config)
         wrapper._sts_client = mock_sts
 
-        import aws_demo_booth.agent_wrapper as aw_module
+        import agent_wrapper as aw_module
 
         mock_agent_cls = MagicMock(side_effect=RuntimeError("Model unavailable"))
         with patch.object(aw_module, "Agent", mock_agent_cls, create=True), \
@@ -628,7 +628,7 @@ class TestInvoke:
         assert "RuntimeError" in result.error
         assert result.content == ""
 
-    @patch("aws_demo_booth.agent_wrapper.boto3.client")
+    @patch("agent_wrapper.boto3.client")
     @pytest.mark.asyncio
     async def test_invoke_metadata_includes_model_and_role(self, mock_boto_client):
         """invoke response metadata includes model_id, role_arn, and guardrails_applied."""
@@ -649,7 +649,7 @@ class TestInvoke:
         mock_agent_instance = MagicMock()
         mock_agent_instance.return_value = "Response"
 
-        import aws_demo_booth.agent_wrapper as aw_module
+        import agent_wrapper as aw_module
 
         with patch.object(aw_module, "Agent", mock_agent_instance, create=True), \
              patch.object(aw_module, "BedrockModel", MagicMock(), create=True), \

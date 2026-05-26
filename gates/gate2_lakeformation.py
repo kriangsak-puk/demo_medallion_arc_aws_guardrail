@@ -9,9 +9,9 @@ import asyncio
 import logging
 from typing import Any, Dict, List
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import Gate, GateContext, GateResult
-from aws_demo_booth.mock_engine import MockEngine
+from config import AppMode
+from gates.base import Gate, GateContext, GateResult
+from mock_engine import MockEngine
 
 logger = logging.getLogger(__name__)
 
@@ -64,13 +64,17 @@ class Gate2LakeFormation(Gate):
         try:
             # Create Chainlit Step element
             if cl is not None:
-                step = cl.Step(
-                    name="[Gate 2] Evaluating AWS Lake Formation...",
-                    parent_id=context.parent_message.id
-                    if context.parent_message
-                    else None,
-                )
-                await step.__aenter__()
+                try:
+                    step = cl.Step(
+                        name="[Gate 2] Evaluating AWS Lake Formation...",
+                        parent_id=context.parent_message.id
+                        if context.parent_message
+                        else None,
+                    )
+                    await step.__aenter__()
+                except Exception:
+                    # Chainlit context not available (e.g., in tests)
+                    step = None
 
             # Retrieve column access data with timeout
             column_data = await asyncio.wait_for(

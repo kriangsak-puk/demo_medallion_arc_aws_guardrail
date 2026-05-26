@@ -2,8 +2,8 @@
 
 import pytest
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import Gate, GateContext, GatePipeline, GateResult
+from config import AppMode
+from gates.base import Gate, GateContext, GatePipeline, GateResult
 
 
 # --- Concrete gate implementations for testing ---

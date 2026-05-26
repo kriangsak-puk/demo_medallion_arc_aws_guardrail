@@ -5,7 +5,7 @@ from unittest.mock import patch
 
 import pytest
 
-from aws_demo_booth.config import (
+from config import (
     AppConfig,
     AppMode,
     ModeStatus,

@@ -9,9 +9,9 @@ import asyncio
 import logging
 from typing import Any, Dict
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import Gate, GateContext, GateResult
-from aws_demo_booth.mock_engine import MockEngine
+from config import AppMode
+from gates.base import Gate, GateContext, GateResult
+from mock_engine import MockEngine
 
 logger = logging.getLogger(__name__)
 

@@ -1,5 +1,5 @@
 services:
-  safe-haven-demo-booth:
+  demo-medallion-arc-aws-guardrail:
     build:
       context: .
     ports:
@@ -15,6 +15,7 @@ services:
       - RESTRICTED_ROLE_ARN=arn:aws:iam::123456789012:role/RestrictedRole
       - AWS_DEFAULT_REGION=ap-southeast-1
       - MOCK_MODE=true
+      - UV_SYSTEM_PYTHON=1
     healthcheck:
       test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
       interval: 30s

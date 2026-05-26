@@ -15,12 +15,12 @@ import pytest
 from hypothesis import given, settings, assume
 from hypothesis import strategies as st
 
-from aws_demo_booth.agent_wrapper import AgentConfig, AgentResponse
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.engine_a import EngineA, EngineResult
-from aws_demo_booth.engine_b import EngineB
-from aws_demo_booth.gates.base import Gate, GateContext, GatePipeline, GateResult
-from aws_demo_booth.mock_engine import MockEngine
+from agent_wrapper import AgentConfig, AgentResponse
+from config import AppMode
+from engine_a import EngineA, EngineResult
+from engine_b import EngineB
+from gates.base import Gate, GateContext, GatePipeline, GateResult
+from mock_engine import MockEngine
 
 
 # =============================================================================
@@ -315,7 +315,7 @@ def patch_mock_gate_delays(monkeypatch):
     The MockEngine gates use random 1-2 second delays which would make
     100 iterations extremely slow. We patch asyncio.sleep to be instant.
     """
-    import aws_demo_booth.mock_engine as mock_engine_module
+    import mock_engine as mock_engine_module
 
     original_sleep = asyncio.sleep
 

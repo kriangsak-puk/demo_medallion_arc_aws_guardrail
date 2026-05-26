@@ -8,9 +8,9 @@ it only shows scan results to the visitor.
 import asyncio
 from typing import Any, Dict, List, Optional, Tuple
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import Gate, GateContext, GateResult
-from aws_demo_booth.mock_engine import MockEngine
+from config import AppMode
+from gates.base import Gate, GateContext, GateResult
+from mock_engine import MockEngine
 
 
 class Gate1Macie(Gate):

@@ -5,7 +5,7 @@ import time
 
 import pytest
 
-from aws_demo_booth.mock_engine import MockEngine
+from mock_engine import MockEngine
 
 
 @pytest.fixture

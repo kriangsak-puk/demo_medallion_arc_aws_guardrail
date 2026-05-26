@@ -13,8 +13,8 @@ import pytest
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import Gate, GateContext, GatePipeline, GateResult
+from config import AppMode
+from gates.base import Gate, GateContext, GatePipeline, GateResult
 
 
 # --- Timestamp-recording test gate ---
@@ -231,7 +231,10 @@ class TestProperty4GateSequentialOrdering:
             f"Third executed gate should be Gate_3, got {records[2].gate_name}"
         )
 
-        # Also verify monotonic time ordering
-        assert records[0].start_time < records[1].start_time < records[2].start_time, (
-            "Gate start times must be strictly increasing"
+        # Also verify monotonic time ordering (end of previous <= start of next)
+        assert records[0].end_time <= records[1].start_time, (
+            "Gate_1 must complete before Gate_2 starts"
+        )
+        assert records[1].end_time <= records[2].start_time, (
+            "Gate_2 must complete before Gate_3 starts"
         )

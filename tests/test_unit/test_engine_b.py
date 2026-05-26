@@ -5,11 +5,11 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.agent_wrapper import AgentConfig, AgentResponse, RoleAssumptionError
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.engine_a import EngineResult
-from aws_demo_booth.engine_b import EngineB, ENGINE_B_TIMEOUT_SECONDS
-from aws_demo_booth.gates.base import GateResult
+from agent_wrapper import AgentConfig, AgentResponse, RoleAssumptionError
+from config import AppMode
+from engine_a import EngineResult
+from engine_b import EngineB, ENGINE_B_TIMEOUT_SECONDS
+from gates.base import GateResult
 
 
 @pytest.fixture
@@ -287,7 +287,7 @@ class TestEngineBProcessLive:
             "execute",
             side_effect=slow_gate,
         ):
-            with patch("aws_demo_booth.engine_b.ENGINE_B_TIMEOUT_SECONDS", 0.1):
+            with patch("engine_b.ENGINE_B_TIMEOUT_SECONDS", 0.1):
                 result = await engine.process("test prompt")
 
         assert result.error is not None

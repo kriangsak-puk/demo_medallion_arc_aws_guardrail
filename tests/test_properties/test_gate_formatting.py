@@ -6,8 +6,8 @@ Feature: safe-haven-demo-booth
 from hypothesis import given, settings
 from hypothesis import strategies as st
 
-from aws_demo_booth.gates.gate2_lakeformation import Gate2LakeFormation
-from aws_demo_booth.gates.gate3_guardrails import Gate3Guardrails, VALID_ACTIONS
+from gates.gate2_lakeformation import Gate2LakeFormation
+from gates.gate3_guardrails import Gate3Guardrails, VALID_ACTIONS
 
 
 # --- Strategies ---

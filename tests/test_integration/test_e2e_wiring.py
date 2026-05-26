@@ -15,23 +15,23 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.agent_wrapper import (
+from agent_wrapper import (
     AgentConfig,
     AgentResponse,
     RoleAssumptionError,
     StrandsAgentWrapper,
 )
-from aws_demo_booth.config import AppConfig, AppMode, ModeStatus
-from aws_demo_booth.engine_a import EngineA, EngineResult
-from aws_demo_booth.engine_b import EngineB
-from aws_demo_booth.gates.base import GateContext, GatePipeline, GateResult
-from aws_demo_booth.gates.gate1_macie import Gate1Macie
-from aws_demo_booth.gates.gate2_lakeformation import Gate2LakeFormation
-from aws_demo_booth.gates.gate3_guardrails import Gate3Guardrails
-from aws_demo_booth.mock_engine import MockEngine
-from aws_demo_booth.mode_detector import ModeDetector
-from aws_demo_booth.presets import PresetManager
-from aws_demo_booth.validators import sanitize_for_engine, validate_prompt
+from config import AppConfig, AppMode, ModeStatus
+from engine_a import EngineA, EngineResult
+from engine_b import EngineB
+from gates.base import GateContext, GatePipeline, GateResult
+from gates.gate1_macie import Gate1Macie
+from gates.gate2_lakeformation import Gate2LakeFormation
+from gates.gate3_guardrails import Gate3Guardrails
+from mock_engine import MockEngine
+from mode_detector import ModeDetector
+from presets import PresetManager
+from validators import sanitize_for_engine, validate_prompt
 
 
 def _make_agent_config() -> AgentConfig:
@@ -348,7 +348,7 @@ class TestMidRequestFallback:
 
         with patch.object(agent, "invoke", side_effect=slow_invoke):
             # Use a short timeout for testing by patching the constant
-            with patch("aws_demo_booth.engine_a.ENGINE_A_TIMEOUT_SECONDS", 0.1):
+            with patch("engine_a.ENGINE_A_TIMEOUT_SECONDS", 0.1):
                 result = await engine_a.process("test prompt")
 
         # Should return an error result (timeout)
@@ -368,7 +368,7 @@ class TestMidRequestFallback:
             await asyncio.sleep(100)
 
         with patch.object(engine_b, "_process_internal", side_effect=slow_process):
-            with patch("aws_demo_booth.engine_b.ENGINE_B_TIMEOUT_SECONDS", 0.1):
+            with patch("engine_b.ENGINE_B_TIMEOUT_SECONDS", 0.1):
                 result = await engine_b.process("test prompt")
 
         # Should return an error result (timeout)

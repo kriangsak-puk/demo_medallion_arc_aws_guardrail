@@ -1,0 +1,25 @@
+[project]
+name = "demo-medallion-arc-aws-guardrail"
+version = "1.0.0"
+description = "Medallion Architecture with AWS Guardrails — Dual-engine AI security demo for AWS Summit Bangkok"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "chainlit>=2.2,<3.0",
+    "strands-agents==0.1.5",
+    "boto3==1.35.98",
+    "plotly==5.24.1",
+    "python-dotenv>=1.0",
+]
+
+[dependency-groups]
+dev = [
+    "hypothesis==6.115.6",
+    "pytest==8.3.4",
+    "pytest-asyncio==0.24.0",
+]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+asyncio_mode = "auto"
+pythonpath = ["."]

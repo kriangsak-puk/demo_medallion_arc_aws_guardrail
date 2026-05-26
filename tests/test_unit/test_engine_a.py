@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.agent_wrapper import AgentConfig, AgentResponse, RoleAssumptionError
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.engine_a import EngineA, EngineResult
+from agent_wrapper import AgentConfig, AgentResponse, RoleAssumptionError
+from config import AppMode
+from engine_a import EngineA, EngineResult
 
 
 @pytest.fixture
@@ -247,7 +247,7 @@ class TestEngineAProcessLive:
         mock_agent.invoke.side_effect = slow_invoke
 
         # Patch the timeout to be very short for testing
-        with patch("aws_demo_booth.engine_a.ENGINE_A_TIMEOUT_SECONDS", 0.1):
+        with patch("engine_a.ENGINE_A_TIMEOUT_SECONDS", 0.1):
             result = await engine.process("test prompt")
 
         assert result.error is not None

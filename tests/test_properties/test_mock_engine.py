@@ -11,7 +11,7 @@ import pytest
 from hypothesis import given, settings, assume
 from hypothesis import strategies as st
 
-from aws_demo_booth.mock_engine import MockEngine
+from mock_engine import MockEngine
 
 
 # --- Strategies ---

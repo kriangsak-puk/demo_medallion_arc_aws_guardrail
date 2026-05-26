@@ -18,18 +18,18 @@ import logging
 import time
 from typing import Any, Awaitable, Callable, List, Optional
 
-from aws_demo_booth.agent_wrapper import (
+from agent_wrapper import (
     AgentResponse,
     RoleAssumptionError,
     StrandsAgentWrapper,
 )
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.engine_a import EngineResult
-from aws_demo_booth.gates.base import GateContext, GatePipeline, GateResult
-from aws_demo_booth.gates.gate1_macie import Gate1Macie
-from aws_demo_booth.gates.gate2_lakeformation import Gate2LakeFormation
-from aws_demo_booth.gates.gate3_guardrails import Gate3Guardrails
-from aws_demo_booth.mock_engine import MockEngine
+from config import AppMode
+from engine_a import EngineResult
+from gates.base import GateContext, GatePipeline, GateResult
+from gates.gate1_macie import Gate1Macie
+from gates.gate2_lakeformation import Gate2LakeFormation
+from gates.gate3_guardrails import Gate3Guardrails
+from mock_engine import MockEngine
 
 logger = logging.getLogger(__name__)
 

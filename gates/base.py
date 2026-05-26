@@ -8,7 +8,7 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from typing import Any, Dict, List, Optional
 
-from aws_demo_booth.config import AppMode
+from config import AppMode
 
 
 @dataclass

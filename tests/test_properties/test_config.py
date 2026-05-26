@@ -11,11 +11,11 @@ from unittest.mock import patch
 from hypothesis import given, settings, assume
 from hypothesis import strategies as st
 
-from aws_demo_booth.config import AppConfig, REQUIRED_ENV_VARS
-from aws_demo_booth.presets import PresetManager
+from config import AppConfig, REQUIRED_ENV_VARS
+from presets import PresetManager
 
 # Logger used by the config module
-CONFIG_LOGGER_NAME = "aws_demo_booth.config"
+CONFIG_LOGGER_NAME = "config"
 
 
 # --- Strategies ---
@@ -295,7 +295,7 @@ from typing import Any, Dict, List
 
 import pytest
 
-from aws_demo_booth.chart_renderer import ChartRenderer, ChartResult
+from chart_renderer import ChartRenderer, ChartResult
 
 try:
     import plotly.graph_objects as go

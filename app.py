@@ -21,15 +21,15 @@ from typing import List, Optional
 
 import chainlit as cl
 
-from aws_demo_booth.agent_wrapper import AgentConfig, StrandsAgentWrapper
-from aws_demo_booth.chart_renderer import ChartRenderer
-from aws_demo_booth.config import AppConfig, AppMode, ModeStatus
-from aws_demo_booth.engine_a import EngineA, EngineResult
-from aws_demo_booth.engine_b import EngineB
-from aws_demo_booth.health import health_endpoint, set_ready
-from aws_demo_booth.mode_detector import ModeDetector
-from aws_demo_booth.presets import PresetManager
-from aws_demo_booth.validators import sanitize_for_engine, validate_prompt
+from agent_wrapper import AgentConfig, StrandsAgentWrapper
+from chart_renderer import ChartRenderer
+from config import AppConfig, AppMode, ModeStatus
+from engine_a import EngineA, EngineResult
+from engine_b import EngineB
+from health import health_endpoint, set_ready
+from mode_detector import ModeDetector
+from presets import PresetManager
+from validators import sanitize_for_engine, validate_prompt
 
 logger = logging.getLogger(__name__)
 
@@ -117,8 +117,8 @@ def _build_preset_actions(preset_manager: PresetManager) -> List[cl.Action]:
         action = cl.Action(
             name=f"preset_{preset.id}",
             label=preset.label,
-            value=preset.prompt_text,
-            description=f"⚔️ Attack: {preset.category.replace('_', ' ').title()}",
+            payload={"prompt_text": preset.prompt_text},
+            tooltip=f"⚔️ Attack: {preset.category.replace('_', ' ').title()}",
         )
         actions.append(action)
 
@@ -128,8 +128,8 @@ def _build_preset_actions(preset_manager: PresetManager) -> List[cl.Action]:
         action = cl.Action(
             name=f"preset_{preset.id}",
             label=preset.label,
-            value=preset.prompt_text,
-            description=f"📊 Analytics: {preset.category.replace('_', ' ').title()}",
+            payload={"prompt_text": preset.prompt_text},
+            tooltip=f"📊 Analytics: {preset.category.replace('_', ' ').title()}",
         )
         actions.append(action)
 
@@ -238,8 +238,8 @@ async def _handle_preset_action(action: cl.Action) -> None:
     if is_processing:
         return
 
-    # Get the preset prompt text from the action value
-    prompt_text = action.value
+    # Get the preset prompt text from the action payload
+    prompt_text = action.payload.get("prompt_text", "")
 
     # Display the preset text as a user message in the chat panel
     # (Requirement 8.2 — populate input field with preset text)
@@ -417,18 +417,16 @@ async def _process_prompt(text: str) -> None:
             logger.error(
                 "Both engines timed out after %d seconds", ENGINE_TIMEOUT_SECONDS
             )
-            await msg_a.update(
-                content=(
-                    f"❌ Engine A timed out — no response received within "
-                    f"{ENGINE_TIMEOUT_SECONDS} seconds."
-                )
+            msg_a.content = (
+                f"❌ Engine A timed out — no response received within "
+                f"{ENGINE_TIMEOUT_SECONDS} seconds."
             )
-            await msg_b.update(
-                content=(
-                    f"❌ Engine B timed out — no response received within "
-                    f"{ENGINE_TIMEOUT_SECONDS} seconds."
-                )
+            await msg_a.update()
+            msg_b.content = (
+                f"❌ Engine B timed out — no response received within "
+                f"{ENGINE_TIMEOUT_SECONDS} seconds."
             )
+            await msg_b.update()
             return
 
         # Handle exceptions from gather (per-engine error handling)
@@ -451,26 +449,28 @@ async def _process_prompt(text: str) -> None:
 
         # Update Engine A panel (Requirement 1.3)
         if result_a.error:
-            await msg_a.update(content=f"❌ {result_a.error}")
+            msg_a.content = f"❌ {result_a.error}"
         else:
             # Show raw data with PII in Engine A panel (Requirement 11.5)
             content_a = result_a.response_text
             if result_a.annotations:
                 content_a += "\n\n" + "\n".join(result_a.annotations)
-            await msg_a.update(content=content_a)
+            msg_a.content = content_a
+        await msg_a.update()
 
         # Update Engine B panel (Requirement 1.4)
         if result_b.error:
-            await msg_b.update(content=f"❌ {result_b.error}")
+            msg_b.content = f"❌ {result_b.error}"
         else:
             content_b = result_b.response_text
             if result_b.annotations:
                 content_b += "\n\n" + "\n".join(result_b.annotations)
-            await msg_b.update(content=content_b)
+            msg_b.content = content_b
+        await msg_b.update()
 
-            # Render Plotly chart for analytics queries in Engine B (Req 11.3)
-            if is_analytics and not result_b.is_blocked:
-                await _render_analytics_chart(sanitized, msg_b)
+        # Render Plotly chart for analytics queries in Engine B (Req 11.3)
+        if not result_b.error and is_analytics and not result_b.is_blocked:
+            await _render_analytics_chart(sanitized, msg_b)
 
         # Display summary with engine labels, guardrail actions, and
         # sensitive content detection (Requirement 1.6)

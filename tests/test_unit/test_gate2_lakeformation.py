@@ -5,9 +5,9 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import GateContext, GateResult
-from aws_demo_booth.gates.gate2_lakeformation import Gate2LakeFormation
+from config import AppMode
+from gates.base import GateContext, GateResult
+from gates.gate2_lakeformation import Gate2LakeFormation
 
 
 class TestGate2LakeFormationInit:
@@ -101,7 +101,7 @@ class TestGate2Execute:
         )
 
     @pytest.mark.asyncio
-    @patch("aws_demo_booth.gates.gate2_lakeformation.cl", None, create=True)
+    @patch("gates.gate2_lakeformation.cl", None, create=True)
     async def test_execute_mock_mode_success(self, mock_context):
         """Test successful execution in MOCK mode without Chainlit."""
         gate = Gate2LakeFormation()
@@ -123,7 +123,7 @@ class TestGate2Execute:
         assert result.details["expanded"] is True
 
     @pytest.mark.asyncio
-    @patch("aws_demo_booth.gates.gate2_lakeformation.cl", None, create=True)
+    @patch("gates.gate2_lakeformation.cl", None, create=True)
     async def test_execute_all_permitted_collapsed(self, mock_context):
         """Test that expansion state is False when all columns permitted."""
         gate = Gate2LakeFormation()
@@ -141,7 +141,7 @@ class TestGate2Execute:
         assert result.details["expanded"] is False
 
     @pytest.mark.asyncio
-    @patch("aws_demo_booth.gates.gate2_lakeformation.cl", None, create=True)
+    @patch("gates.gate2_lakeformation.cl", None, create=True)
     async def test_execute_timeout_blocks_data_retrieval(self, mock_context):
         """Test that timeout results in blocked=True."""
         gate = Gate2LakeFormation()
@@ -162,7 +162,7 @@ class TestGate2Execute:
         assert "timed out" in result.error
 
     @pytest.mark.asyncio
-    @patch("aws_demo_booth.gates.gate2_lakeformation.cl", None, create=True)
+    @patch("gates.gate2_lakeformation.cl", None, create=True)
     async def test_execute_exception_blocks_data_retrieval(self, mock_context):
         """Test that an exception results in blocked=True."""
         gate = Gate2LakeFormation()
@@ -179,7 +179,7 @@ class TestGate2Execute:
         assert "Service unreachable" in result.error
 
     @pytest.mark.asyncio
-    @patch("aws_demo_booth.gates.gate2_lakeformation.cl", None, create=True)
+    @patch("gates.gate2_lakeformation.cl", None, create=True)
     async def test_execute_live_mode_not_implemented(self):
         """Test that LIVE mode raises NotImplementedError (placeholder)."""
         gate = Gate2LakeFormation()

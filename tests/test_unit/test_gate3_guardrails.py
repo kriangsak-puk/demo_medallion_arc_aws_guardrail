@@ -4,9 +4,9 @@ from unittest.mock import AsyncMock, patch
 
 import pytest
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import GateContext
-from aws_demo_booth.gates.gate3_guardrails import Gate3Guardrails
+from config import AppMode
+from gates.base import GateContext
+from gates.gate3_guardrails import Gate3Guardrails
 
 
 @pytest.fixture

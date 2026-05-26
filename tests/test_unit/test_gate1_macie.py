@@ -3,9 +3,9 @@
 import pytest
 import pytest_asyncio
 
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.gates.base import GateContext, GateResult
-from aws_demo_booth.gates.gate1_macie import Gate1Macie
+from config import AppMode
+from gates.base import GateContext, GateResult
+from gates.gate1_macie import Gate1Macie
 
 
 class TestGate1MacieInit:

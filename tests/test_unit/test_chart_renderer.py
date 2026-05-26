@@ -13,7 +13,7 @@ Tests cover:
 import pytest
 import pytest_asyncio
 
-from aws_demo_booth.chart_renderer import (
+from chart_renderer import (
     BAR_KEYWORDS,
     LINE_KEYWORDS,
     MOCK_MONTHLY_TRENDS,

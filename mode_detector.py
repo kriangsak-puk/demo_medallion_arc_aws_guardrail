@@ -16,7 +16,7 @@ from botocore.exceptions import (
     NoCredentialsError,
 )
 
-from aws_demo_booth.config import AppMode, ModeStatus
+from config import AppMode, ModeStatus
 
 logger = logging.getLogger(__name__)
 

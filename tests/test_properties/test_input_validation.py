@@ -10,7 +10,7 @@ import pytest
 from hypothesis import given, settings, assume
 from hypothesis import strategies as st
 
-from aws_demo_booth.validators import sanitize_for_engine
+from validators import sanitize_for_engine
 
 
 # --- Constants matching the implementation ---

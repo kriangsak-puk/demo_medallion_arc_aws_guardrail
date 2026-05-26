@@ -17,7 +17,7 @@ import pytest
 from hypothesis import given, settings, assume
 from hypothesis import strategies as st
 
-from aws_demo_booth.chart_renderer import ChartRenderer, ChartResult
+from chart_renderer import ChartRenderer, ChartResult
 
 try:
     import plotly.graph_objects as go

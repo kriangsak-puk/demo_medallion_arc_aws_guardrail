@@ -12,13 +12,13 @@ import time
 from dataclasses import dataclass, field
 from typing import Awaitable, Callable, List, Optional
 
-from aws_demo_booth.agent_wrapper import (
+from agent_wrapper import (
     AgentResponse,
     RoleAssumptionError,
     StrandsAgentWrapper,
 )
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.mock_engine import MockEngine
+from config import AppMode
+from mock_engine import MockEngine
 
 logger = logging.getLogger(__name__)
 

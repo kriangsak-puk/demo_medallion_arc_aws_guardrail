@@ -5,8 +5,8 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.config import AppMode, ModeStatus
-from aws_demo_booth.mode_detector import ModeDetector, SERVICE_HEALTH_TIMEOUT
+from config import AppMode, ModeStatus
+from mode_detector import ModeDetector, SERVICE_HEALTH_TIMEOUT
 
 
 @pytest.fixture

@@ -40,7 +40,7 @@ coverage.xml
 # Chainlit
 .chainlit/translations/
 .files/
-
+prototype.html
 # OS files
 .DS_Store
 Thumbs.db
@@ -51,6 +51,9 @@ desktop.ini
 
 # Logs
 *.log
+# data
+*.parquet
+*.csv
 
 # uv
-uv.lock
+# uv.lock is committed for reproducible builds

@@ -12,18 +12,18 @@ from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
 
-from aws_demo_booth.agent_wrapper import (
+from agent_wrapper import (
     AgentConfig,
     AgentResponse,
     KnowledgeBaseError,
     RoleAssumptionError,
     StrandsAgentWrapper,
 )
-from aws_demo_booth.config import AppMode
-from aws_demo_booth.engine_a import EngineA, EngineResult
-from aws_demo_booth.engine_b import EngineB
-from aws_demo_booth.gates.base import GateContext, GatePipeline, GateResult
-from aws_demo_booth.health import (
+from config import AppMode
+from engine_a import EngineA, EngineResult
+from engine_b import EngineB
+from gates.base import GateContext, GatePipeline, GateResult
+from health import (
     INIT_TIMEOUT_SECONDS,
     get_health_status,
     is_ready,
@@ -31,7 +31,7 @@ from aws_demo_booth.health import (
     set_not_ready,
     set_ready,
 )
-from aws_demo_booth.validators import sanitize_for_engine, validate_prompt
+from validators import sanitize_for_engine, validate_prompt
 
 
 def _make_agent_config() -> AgentConfig:
@@ -716,7 +716,7 @@ class TestHealthEndpointStartupTiming:
     @pytest.mark.asyncio
     async def test_health_endpoint_asgi_returns_503(self):
         """Health ASGI endpoint returns 503 when not ready."""
-        from aws_demo_booth.health import health_endpoint
+        from health import health_endpoint
 
         responses: list = []
 
@@ -737,7 +737,7 @@ class TestHealthEndpointStartupTiming:
     @pytest.mark.asyncio
     async def test_health_endpoint_asgi_returns_200_when_ready(self):
         """Health ASGI endpoint returns 200 after set_ready()."""
-        from aws_demo_booth.health import health_endpoint
+        from health import health_endpoint
 
         set_ready()
         responses: list = []

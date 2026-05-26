@@ -4,7 +4,7 @@ import re
 
 import pytest
 
-from aws_demo_booth.presets import AttackPreset, PresetManager
+from presets import AttackPreset, PresetManager
 
 # Regex pattern to match common emoji characters (Unicode emoji ranges)
 EMOJI_PATTERN = re.compile(

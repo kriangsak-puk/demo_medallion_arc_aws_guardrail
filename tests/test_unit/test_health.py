@@ -15,7 +15,7 @@ from unittest.mock import patch
 
 import pytest
 
-from aws_demo_booth.health import (
+from health import (
     INIT_TIMEOUT_SECONDS,
     get_health_status,
     health_endpoint,
@@ -94,7 +94,7 @@ class TestGetHealthStatus:
         """Reason indicates timeout exceeded when past INIT_TIMEOUT_SECONDS."""
         # Simulate startup time being far in the past
         with patch(
-            "aws_demo_booth.health._startup_time",
+            "health._startup_time",
             time.time() - INIT_TIMEOUT_SECONDS - 1,
         ):
             status_code, body = get_health_status()
