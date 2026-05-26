@@ -1,0 +1,23 @@
+services:
+  safe-haven-demo-booth:
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    environment:
+      - KNOWLEDGE_BASE_ID=your-knowledge-base-id
+      - GUARDRAILS_ID=your-guardrails-id
+      - GUARDRAILS_VERSION=1
+      - GLUE_DATABASE_NAME=your-glue-database-name
+      - GLUE_TABLE_NAME=your-gold-table-name
+      - BEDROCK_MODEL_ID=anthropic.claude-3-sonnet-20240229-v1:0
+      - PERMISSIVE_ROLE_ARN=arn:aws:iam::123456789012:role/PermissiveRole
+      - RESTRICTED_ROLE_ARN=arn:aws:iam::123456789012:role/RestrictedRole
+      - AWS_DEFAULT_REGION=ap-southeast-1
+      - MOCK_MODE=true
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s

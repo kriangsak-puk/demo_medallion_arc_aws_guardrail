@@ -1,0 +1,49 @@
+/* Safe Haven Demo Booth — Custom Preset Button Styles
+ *
+ * Visually distinguishes attack presets (red/danger) from analytics presets (blue/primary)
+ * using CSS targeting Chainlit action button elements by their data attributes.
+ * Requirement 11.6: Analytics presets visually distinguished from attack presets.
+ */
+
+/* Attack preset buttons — red/danger theme */
+button[id^="action-preset_pii"],
+button[id^="action-preset_prompt"],
+button[id^="action-preset_role"],
+button[id^="action-preset_data"],
+button[id^="action-preset_hallucination"],
+button[id^="action-preset_credential"],
+button[id^="action-preset_security"] {
+    border: 2px solid #ef4444 !important;
+    background-color: rgba(239, 68, 68, 0.1) !important;
+    color: #fca5a5 !important;
+}
+
+button[id^="action-preset_pii"]:hover,
+button[id^="action-preset_prompt"]:hover,
+button[id^="action-preset_role"]:hover,
+button[id^="action-preset_data"]:hover,
+button[id^="action-preset_hallucination"]:hover,
+button[id^="action-preset_credential"]:hover,
+button[id^="action-preset_security"]:hover {
+    background-color: rgba(239, 68, 68, 0.25) !important;
+    border-color: #f87171 !important;
+}
+
+/* Analytics preset buttons — blue/primary theme */
+button[id^="action-preset_analytics"] {
+    border: 2px solid #3b82f6 !important;
+    background-color: rgba(59, 130, 246, 0.1) !important;
+    color: #93c5fd !important;
+}
+
+button[id^="action-preset_analytics"]:hover {
+    background-color: rgba(59, 130, 246, 0.25) !important;
+    border-color: #60a5fa !important;
+}
+
+/* Disabled state for all preset buttons during processing */
+button[id^="action-preset"]:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    pointer-events: none !important;
+}
