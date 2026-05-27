@@ -11,7 +11,16 @@
         "bedrock:Retrieve",
         "bedrock:RetrieveAndGenerate",
         "bedrock:GetInferenceProfile",
-        "bedrock:ListInferenceProfiles"
+        "bedrock:ListInferenceProfiles",
+        "bedrock:ApplyGuardrail"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "aws-marketplace:ViewSubscriptions",
+        "aws-marketplace:Subscribe"
       ],
       "Resource": "*"
     }

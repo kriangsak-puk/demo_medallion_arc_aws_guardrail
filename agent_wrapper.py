@@ -377,6 +377,9 @@ class StrandsAgentWrapper:
                         if content["text"]:
                             context_parts.append(content["text"])
                 kb_context = "\n".join(context_parts)
+                # Limit context to ~10K chars to control input token costs
+                if len(kb_context) > 10000:
+                    kb_context = kb_context[:10000]
                 logger.info("KB retrieved %d results (%d chars context)", len(results), len(kb_context))
             except Exception as kb_err:
                 logger.error("KB retrieval failed: [%s] %s", type(kb_err).__name__, str(kb_err))
@@ -410,6 +413,7 @@ class StrandsAgentWrapper:
                     logger.info("Generated SQL: %s", generated_sql)
             except Exception as sql_err:
                 logger.warning("GenerateQuery failed: %s", sql_err)
+                generated_sql = "⚠️ Could not generate SQL for this query — try rephrasing your question"
 
             # Step 4b: Build enriched prompt with KB context
             if kb_context:
@@ -433,13 +437,24 @@ class StrandsAgentWrapper:
                     "- Do NOT explain what data you need — just ask user to retry"
                 )
 
-            model_kwargs: Dict[str, Any] = {}
+            model_kwargs: Dict[str, Any] = {
+                "model_id": self.config.bedrock_model_id,
+                "max_tokens": 500,
+            }
             if guardrail_config:
-                model_kwargs["guardrail_config"] = guardrail_config
+                model_kwargs["guardrail_id"] = self.config.guardrails_id
+                model_kwargs["guardrail_version"] = self.config.guardrails_version
+
+            # Create a boto3 Session with assumed role credentials
+            assumed_session = boto3.Session(
+                aws_access_key_id=credentials["aws_access_key_id"],
+                aws_secret_access_key=credentials["aws_secret_access_key"],
+                aws_session_token=credentials["aws_session_token"],
+                region_name=self.config.region,
+            )
 
             model = BedrockModel(
-                model_id=self.config.bedrock_model_id,
-                boto_client=bedrock_client,
+                boto_session=assumed_session,
                 **model_kwargs,
             )
 
@@ -450,18 +465,27 @@ class StrandsAgentWrapper:
             # Extract response content
             content = str(response)
 
-            # Stream tokens via callback if provided
-            if on_token and content:
-                # In production, streaming would happen during agent execution
-                # via a callback handler. Here we simulate token delivery.
-                for token in content.split():
-                    await on_token(token + " ")
-
-            # Determine guardrail action from response metadata
+            # Check if guardrail intervened
             guardrail_action = None
             if apply_guardrails:
-                # The Strands SDK provides guardrail trace in response metadata
-                guardrail_action = "PASS"  # Default if no block/modification detected
+                stop_reason = getattr(response, "stop_reason", None)
+                if stop_reason == "guardrail_intervened":
+                    guardrail_action = "BLOCKED"
+                    content = (
+                        "🛡️ **BLOCKED BY BEDROCK GUARDRAILS**\n\n"
+                        "Your request was evaluated by Amazon Bedrock Guardrails "
+                        "and blocked before the model could respond.\n\n"
+                        "**Reason**: Content policy violation detected\n"
+                        "**Action**: INPUT/OUTPUT BLOCKED"
+                    )
+                    logger.info("Guardrail BLOCKED the response (stop_reason=guardrail_intervened)")
+                else:
+                    guardrail_action = "PASS"
+
+            # Stream tokens via callback if provided
+            if on_token and content:
+                for token in content.split():
+                    await on_token(token + " ")
 
             return AgentResponse(
                 content=content,
