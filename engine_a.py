@@ -22,8 +22,8 @@ from mock_engine import MockEngine
 
 logger = logging.getLogger(__name__)
 
-# Engine A timeout in seconds (Requirement 2.6, 1.10)
-ENGINE_A_TIMEOUT_SECONDS = 30
+# Engine A timeout in seconds
+ENGINE_A_TIMEOUT_SECONDS = 180
 
 
 @dataclass
@@ -269,6 +269,11 @@ class EngineA:
         annotations: List[str] = []
         if detected_types:
             annotations.append("⚠️ Ungoverned — Data Leaked")
+
+        # Include generated SQL in annotations if available
+        generated_sql = agent_response.metadata.get("generated_sql", "")
+        if generated_sql:
+            annotations.append(f"📝 **Generated SQL:**\n```sql\n{generated_sql}\n```")
 
         duration_ms = (time.perf_counter() - start_time) * 1000
 

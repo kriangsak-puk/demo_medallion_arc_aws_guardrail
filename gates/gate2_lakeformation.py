@@ -167,23 +167,31 @@ class Gate2LakeFormation(Gate):
             return await self._get_live_column_access()
 
     async def _get_live_column_access(self) -> Dict[str, Any]:
-        """Retrieve column access from live Lake Formation service.
+        """Retrieve column access information for display.
 
-        Placeholder implementation — will be replaced with actual
-        Lake Formation API calls when integrated with AWS services.
+        In live mode, the actual column restriction is enforced by Lake Formation
+        at the IAM role level (Restricted_Role can't see PII columns). This gate
+        displays the known column access configuration for visitor education.
 
         Returns:
             Dictionary with 'allowed' and 'denied' column lists.
-
-        Raises:
-            NotImplementedError: Until live AWS integration is implemented.
         """
-        # TODO: Implement live Lake Formation permission retrieval
-        # using boto3 lakeformation client with Restricted_Role
-        raise NotImplementedError(
-            "Live Lake Formation integration not yet implemented. "
-            "Use MOCK mode for demo."
-        )
+        # The column access is determined by Lake Formation grants on the roles.
+        # We display the known configuration for the demo.
+        # In a full production system, this would call
+        # lakeformation:GetEffectivePermissionsForPath to dynamically determine access.
+        return {
+            "allowed": [
+                "customer_id", "order_id", "order_date", "product_name",
+                "category", "quantity", "price_per_unit", "total_amount",
+                "payment_method", "order_status", "product_sku",
+            ],
+            "denied": [
+                "first_name", "last_name", "email", "phone_number",
+                "national_id", "date_of_birth", "credit_card_number",
+                "shipping_address", "billing_address", "device_ip_address",
+            ],
+        }
 
     def format_lakeformation_output(
         self, allowed: List[str], denied: List[str]

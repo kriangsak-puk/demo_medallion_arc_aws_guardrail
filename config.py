@@ -52,6 +52,8 @@ class AppConfig:
     """
 
     knowledge_base_id: str
+    knowledge_base_id_permissive: str  # Engine A (bad) — raw data with PII
+    knowledge_base_id_restricted: str  # Engine B (good) — masked data
     guardrails_id: str
     guardrails_version: str
     glue_database_name: str
@@ -90,6 +92,8 @@ class AppConfig:
 
         config = cls(
             knowledge_base_id=os.environ.get("KNOWLEDGE_BASE_ID", ""),
+            knowledge_base_id_permissive=os.environ.get("KNOWLEDGE_BASE_ID_PERMISSIVE", os.environ.get("KNOWLEDGE_BASE_ID", "")),
+            knowledge_base_id_restricted=os.environ.get("KNOWLEDGE_BASE_ID_RESTRICTED", os.environ.get("KNOWLEDGE_BASE_ID", "")),
             guardrails_id=os.environ.get("GUARDRAILS_ID", ""),
             guardrails_version=os.environ.get("GUARDRAILS_VERSION", ""),
             glue_database_name=os.environ.get("GLUE_DATABASE_NAME", ""),

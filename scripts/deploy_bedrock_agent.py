@@ -72,9 +72,12 @@ AGENT_ROLE_NAME = "BedrockAgentRole-SafeHavenDemo"
 # Clients
 # =============================================================================
 
-sts = boto3.client("sts", region_name=REGION)
-iam = boto3.client("iam", region_name=REGION)
-bedrock_agent = boto3.client("bedrock-agent", region_name=REGION)
+AWS_PROFILE = os.getenv("AWS_PROFILE", "kriangsak_admin")
+session = boto3.Session(profile_name=AWS_PROFILE, region_name=REGION)
+
+sts = session.client("sts")
+iam = session.client("iam")
+bedrock_agent = session.client("bedrock-agent")
 
 ACCOUNT_ID = sts.get_caller_identity()["Account"]
 

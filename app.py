@@ -59,8 +59,8 @@ SESSION_PRESET_MSG = "preset_message"
 SESSION_PRESET_MANAGER = "preset_manager"
 SESSION_CHART_RENDERER = "chart_renderer"
 
-# Engine timeout in seconds (Requirement 1.10)
-ENGINE_TIMEOUT_SECONDS = 30
+# Engine timeout in seconds (KB retrieval can take 60s+ from local network)
+ENGINE_TIMEOUT_SECONDS = 180
 
 # Analytics detection keywords
 ANALYTICS_KEYWORDS = [
@@ -177,6 +177,8 @@ async def on_chat_start() -> None:
     agent_config = AgentConfig(
         bedrock_model_id=config.bedrock_model_id,
         knowledge_base_id=config.knowledge_base_id,
+        knowledge_base_id_permissive=config.knowledge_base_id_permissive,
+        knowledge_base_id_restricted=config.knowledge_base_id_restricted,
         guardrails_id=config.guardrails_id,
         guardrails_version=config.guardrails_version,
         glue_database_name=config.glue_database_name,
@@ -205,18 +207,38 @@ async def on_chat_start() -> None:
     cl.user_session.set(SESSION_PRESET_MANAGER, preset_manager)
     actions = _build_preset_actions(preset_manager)
 
-    # Send welcome message with preset action buttons displayed in visible area
-    # above the input field on load (Requirement 8.6)
+    # Send welcome message with banner and preset action buttons
     welcome_content = (
-        "# 🏰 Safe Haven Demo Booth\n\n"
-        "Welcome! Submit an attack prompt or analytics query to see the "
+        "# 🔓 Try to Jailbreak Me!\n\n"
+        "Submit an attack prompt or analytics query to see the "
         "security contrast between the **🧟 Data Swamp** (ungoverned) and "
         "**🛡️ Safe Haven** (Zero-Trust governed) pipelines.\n\n"
         "**🔴 Attack Presets** — Try jailbreak and data extraction attacks\n\n"
-        "**🔵 Analytics Presets** — Run governed data queries with charts"
+        "**🔵 Analytics Presets** — Run governed data queries"
     )
 
-    preset_msg = cl.Message(content=welcome_content, actions=actions)
+    banner_image = cl.Image(
+        name="Architecture Diagram",
+        path="public/diagram.png",
+        display="inline",
+        size="large",
+    )
+
+    # Add reset button
+    actions.append(
+        cl.Action(
+            name="reset_session",
+            label="🔄 Reset",
+            payload={"action": "reset"},
+            tooltip="Start a new session",
+        )
+    )
+
+    preset_msg = cl.Message(
+        content=welcome_content,
+        actions=actions,
+        elements=[banner_image],
+    )
     await preset_msg.send()
 
     # Store the preset message reference for later updates (disable/re-enable)
@@ -307,6 +329,13 @@ async def _cb_trends(action: cl.Action) -> None:
 @cl.action_callback("preset_analytics_products")
 async def _cb_products(action: cl.Action) -> None:
     await _handle_preset_action(action)
+
+
+@cl.action_callback("reset_session")
+async def _cb_reset(action: cl.Action) -> None:
+    """Reset the chat session — clears history and re-initializes."""
+    await cl.Message(content="🔄 Session reset. Starting fresh...").send()
+    await on_chat_start()
 
 
 @cl.on_message
@@ -404,7 +433,7 @@ async def _process_prompt(text: str) -> None:
                     engine_a.process(prompt=sanitized, on_token=stream_to_a),
                     engine_b.process(
                         prompt=sanitized,
-                        parent_message=msg_b,
+                        parent_message=None,
                         on_token=stream_to_b,
                     ),
                     return_exceptions=True,
@@ -449,52 +478,26 @@ async def _process_prompt(text: str) -> None:
 
         # Update Engine A panel (Requirement 1.3)
         if result_a.error:
-            msg_a.content = f"❌ {result_a.error}"
+            msg_a.content = f"## 🧟 Data Swamp (Engine A)\n\n❌ {result_a.error}"
         else:
             # Show raw data with PII in Engine A panel (Requirement 11.5)
-            content_a = result_a.response_text
+            content_a = f"## 🧟 Data Swamp (Engine A)\n\n{result_a.response_text}"
             if result_a.annotations:
-                content_a += "\n\n" + "\n".join(result_a.annotations)
+                content_a += "\n\n---\n" + "\n".join(result_a.annotations)
             msg_a.content = content_a
         await msg_a.update()
 
         # Update Engine B panel (Requirement 1.4)
         if result_b.error:
-            msg_b.content = f"❌ {result_b.error}"
+            msg_b.content = f"## 🛡️ Safe Haven (Engine B)\n\n❌ {result_b.error}"
         else:
-            content_b = result_b.response_text
+            content_b = f"## 🛡️ Safe Haven (Engine B)\n\n{result_b.response_text}"
             if result_b.annotations:
-                content_b += "\n\n" + "\n".join(result_b.annotations)
+                content_b += "\n\n---\n" + "\n".join(result_b.annotations)
             msg_b.content = content_b
         await msg_b.update()
 
-        # Render Plotly chart for analytics queries in Engine B (Req 11.3)
-        if not result_b.error and is_analytics and not result_b.is_blocked:
-            await _render_analytics_chart(sanitized, msg_b)
-
-        # Display summary with engine labels, guardrail actions, and
-        # sensitive content detection (Requirement 1.6)
-        summary_parts = []
-
-        # Engine A summary
-        if result_a.error:
-            ea_status = "Error"
-        elif result_a.sensitive_detected:
-            ea_status = "⚠️ Sensitive content detected"
-        else:
-            ea_status = "Response delivered"
-        summary_parts.append(f"**{result_a.engine_label}**: {ea_status}")
-
-        # Engine B summary
-        if result_b.error:
-            eb_status = "Error"
-        elif result_b.guardrail_action:
-            eb_status = f"Guardrail action: {result_b.guardrail_action}"
-        else:
-            eb_status = "Response delivered"
-        summary_parts.append(f"**{result_b.engine_label}**: {eb_status}")
-
-        await cl.Message(content=" | ".join(summary_parts)).send()
+        # Chart rendering disabled — model response is sufficient
 
     except Exception as e:
         # Catch-all for unexpected errors during processing

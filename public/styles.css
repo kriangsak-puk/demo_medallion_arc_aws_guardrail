@@ -92,3 +92,34 @@ button[id^="action-preset"]:disabled {
     -webkit-text-fill-color: transparent;
     background-clip: text;
 }
+
+/* Banner image — full width */
+.inline-image {
+    width: 100% !important;
+    max-width: 100% !important;
+    border-radius: 8px;
+    margin-bottom: 12px;
+}
+
+/* Reduce message text size for compact display */
+.message-content {
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+}
+
+.message-content h1 {
+    font-size: 18px !important;
+}
+
+.message-content h2 {
+    font-size: 16px !important;
+}
+
+.message-content table {
+    font-size: 12px !important;
+}
+
+.message-content pre,
+.message-content code {
+    font-size: 12px !important;
+}

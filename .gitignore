@@ -54,6 +54,6 @@ desktop.ini
 # data
 *.parquet
 *.csv
-
+require.md
 # uv
 # uv.lock is committed for reproducible builds

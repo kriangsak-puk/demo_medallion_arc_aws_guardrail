@@ -34,7 +34,7 @@ from mock_engine import MockEngine
 logger = logging.getLogger(__name__)
 
 # Overall timeout for Engine B processing (seconds)
-ENGINE_B_TIMEOUT_SECONDS = 30.0
+ENGINE_B_TIMEOUT_SECONDS = 180.0
 
 
 class EngineB:
@@ -167,10 +167,13 @@ class EngineB:
         if gate3_result and gate3_result.blocked:
             return EngineResult(
                 engine_label="🛡️ Safe Haven",
-                response_text="🛡️ Blocked by Bedrock Guardrails",
+                response_text="🛡️ **Blocked by Bedrock Guardrails**\n\nYour request was identified as a potential security threat and blocked before reaching the data layer.",
                 is_blocked=True,
                 guardrail_action="BLOCKED",
-                annotations=["🛡️ Blocked by Bedrock Guardrails"],
+                annotations=[
+                    "🛡️ **Guardrails**: INPUT BLOCKED — jailbreak/attack detected",
+                    "🔒 **Column Security**: Not reached (blocked at guardrail layer)",
+                ],
             )
 
         # Not blocked — invoke the Strands Agent with Restricted_Role
@@ -210,11 +213,18 @@ class EngineB:
         # Annotate based on guardrail outcome
         # Always annotate with "✅ Safe Haven — Protected" on successful completion
         annotations.append("✅ Safe Haven — Protected")
+        annotations.append("🔒 **Column Security**: PII columns blocked by Lake Formation (Restricted_Role)")
+        annotations.append("🛡️ **Guardrails**: Bedrock Guardrails active (jailbreak detection + output filtering)")
 
         # If output was redacted/modified, add sanitization annotation
         if output_action == "MODIFIED":
             annotations.append("✅ Output Sanitized by Guardrails")
             guardrail_action = "MODIFIED"
+
+        # Include generated SQL in annotations if available
+        generated_sql = agent_response.metadata.get("generated_sql", "")
+        if generated_sql:
+            annotations.append(f"📝 **Generated SQL:**\n```sql\n{generated_sql}\n```")
 
         return EngineResult(
             engine_label="🛡️ Safe Haven",

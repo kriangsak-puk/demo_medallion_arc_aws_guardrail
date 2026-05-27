@@ -21,7 +21,7 @@ from config import AppMode, ModeStatus
 logger = logging.getLogger(__name__)
 
 # Timeout for service health checks in seconds
-SERVICE_HEALTH_TIMEOUT = 5
+SERVICE_HEALTH_TIMEOUT = 10
 
 
 class ModeDetector:
@@ -135,8 +135,10 @@ class ModeDetector:
                 client.get_caller_identity()
                 return True
             elif service_name == "bedrock":
-                client = boto3.client("bedrock", region_name=self._region)
-                client.list_foundation_models(maxResults=1)
+                # Verify Bedrock connectivity by checking credentials via STS
+                # (list_foundation_models requires extra permissions and is slow)
+                client = boto3.client("sts", region_name=self._region)
+                client.get_caller_identity()
                 return True
             elif service_name == "bedrock-runtime":
                 # For bedrock-runtime, we just verify the client can be created

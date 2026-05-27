@@ -1,0 +1,29 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "BedrockServiceAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "Service": "bedrock.amazonaws.com"
+      },
+      "Action": "sts:AssumeRole",
+      "Condition": {
+        "StringEquals": {
+          "aws:SourceAccount": "095833340753"
+        },
+        "ArnLike": {
+          "aws:SourceArn": "arn:aws:bedrock:ap-southeast-1:095833340753:knowledge-base/*"
+        }
+      }
+    },
+    {
+      "Sid": "DemoAppAccess",
+      "Effect": "Allow",
+      "Principal": {
+        "AWS": "arn:aws:iam::095833340753:user/kriangsak_admin"
+      },
+      "Action": "sts:AssumeRole"
+    }
+  ]
+}
